@@ -4,6 +4,10 @@
  */
 package todolist;
 
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author Aluno
@@ -12,11 +16,23 @@ public class TelaToDoList extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(TelaToDoList.class.getName());
 
+    DefaultTableModel model;
+    
+    private static final String CONCLUIDA = "Concluída";
+    private static final String NAO_CONCLUIDA = "Não Concluída";
+    
+    private final ArrayList<String> tarefas = new ArrayList<>();
+    private final ArrayList<String> tarefasFiltradas = new ArrayList<>();
+    
     /**
      * Creates new form TelaToDoList
      */
     public TelaToDoList() {
         initComponents();
+        
+        setLocationRelativeTo(null);
+        
+        model = (DefaultTableModel)  jTableTarefas.getModel();
     }
 
     /**
@@ -50,6 +66,7 @@ public class TelaToDoList extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jButtonAdicionarTarefa.setText("Adicionar");
+        jButtonAdicionarTarefa.addActionListener(this::jButtonAdicionarTarefaActionPerformed);
 
         jComboBoxFiltroStatus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Todos", "Concluído", "Não Concluído" }));
 
@@ -125,7 +142,63 @@ public class TelaToDoList extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jComboBox1ActionPerformed
 
+    private void jButtonAdicionarTarefaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAdicionarTarefaActionPerformed
+        if (jTextFieldDescricaoTarefa.getText().trim().isEmpty()){
+            JOptionPane.showMessageDialog(null, "A descrição da tarefa não pode ser vazia!");
+            return;
+        }
+        
+        if(hasTarefaRepetida(jTextFieldDescricaoTarefa.getText())){
+           JOptionPane.showMessageDialog(null, "A tarefa " + jTextFieldDescricaoTarefa.getText() + " já existe!");
+           return;
+        }
+        
+        tarefas.add(jTextFieldDescricaoTarefa.getText() + ";" + NAO_CONCLUIDA);
+        
+        preencherTabela();
+        
+        jTextFieldDescricaoTarefa.setText("");
+    }//GEN-LAST:event_jButtonAdicionarTarefaActionPerformed
+
+    public boolean hasTarefaRepetida(String novaTarefa){
+        for (String tarefa : tarefas){
+            String dados[] = tarefa.split(";");
+            
+            if (novaTarefa.toLowerCase().equals(dados[0].toLowerCase())){
+                return true;
+        }
+            
+    }
+    
+    return false;
+    
+}
+    
+    private void preencherTabela(){
+        ArrayList<String> listaTarefas;
+        
+        if(jComboBoxFiltroStatus.getSelectedIndex() > 0){
+            listaTarefas = tarefasFiltradas;
+        }else{
+            listaTarefas = tarefas;        
+        }
+        
+        model.setRowCount(0);
+        
+        for (String tarefa : listaTarefas){
+            String[] dados = tarefa.split(";");
+            
+            model.addRow(new Object[]{
+                dados[0],
+                dados[1]
+            });
+            
+        }
+    }
+    
+    
     /**
+     * 
      * @param args the command line arguments
      */
     public static void main(String args[]) {
