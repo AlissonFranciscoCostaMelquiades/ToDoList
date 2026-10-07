@@ -4,6 +4,8 @@
  */
 package todolist;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -76,6 +78,8 @@ public class TelaToDoListV1 extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        jTextFieldDescricaoTarefa.addActionListener(this::jTextFieldDescricaoTarefaActionPerformed);
+
         jButtonAdicionarTarefa.setText("Adicionar");
         jButtonAdicionarTarefa.addActionListener(this::jButtonAdicionarTarefaActionPerformed);
 
@@ -112,7 +116,7 @@ public class TelaToDoListV1 extends javax.swing.JFrame {
 
         jLabel2.setText("Concluídas:");
 
-        jLabel3.setText("Não Concluídas");
+        jLabel3.setText("Não Concluídas:");
 
         jTextFieldConcluidas.setEditable(false);
         jTextFieldConcluidas.addActionListener(this::jTextFieldConcluidasActionPerformed);
@@ -130,18 +134,16 @@ public class TelaToDoListV1 extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jTextFieldNaoConcluidas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel3)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 84, Short.MAX_VALUE)
                             .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGap(24, 24, 24)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextFieldTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextFieldConcluidas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(jTextFieldTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jTextFieldConcluidas, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jTextFieldNaoConcluidas, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -154,11 +156,14 @@ public class TelaToDoListV1 extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(jTextFieldConcluidas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(jTextFieldNaoConcluidas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 8, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(12, 12, 12)
+                        .addComponent(jLabel3))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextFieldNaoConcluidas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(0, 14, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -188,9 +193,9 @@ public class TelaToDoListV1 extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextFieldDescricaoTarefa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButtonAdicionarTarefa))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jButtonAdicionarTarefa)
+                    .addComponent(jTextFieldDescricaoTarefa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jComboBoxFiltroStatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -219,9 +224,14 @@ public class TelaToDoListV1 extends javax.swing.JFrame {
             return;
         }
         
-        tarefas.add(jTextFieldDescricaoTarefa.getText() + ";" + NAO_CONCLUIDA);
+        LocalDateTime dataAtual = LocalDateTime.now();
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"); 
+        
+        tarefas.add(jTextFieldDescricaoTarefa.getText() + ";" + NAO_CONCLUIDA + ";" + dataAtual.format(formato));
         
         preencherTabela();
+        
+        atualizarEstatisticas();
         
         jTextFieldDescricaoTarefa.setText("");
     }//GEN-LAST:event_jButtonAdicionarTarefaActionPerformed
@@ -240,7 +250,7 @@ public class TelaToDoListV1 extends javax.swing.JFrame {
         
         String[] dados = tarefas.get(indiceTarefaSelecionada).split(";");
         
-        tarefas.set(indiceTarefaSelecionada, dados[0] + ";" + CONCLUIDA);
+        tarefas.set(indiceTarefaSelecionada, dados[0] + ";" + CONCLUIDA + ";" + dados[2]);
         
         filtrarTabela();
         
@@ -290,6 +300,10 @@ public class TelaToDoListV1 extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextFieldNaoConcluidasActionPerformed
 
+    private void jTextFieldDescricaoTarefaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldDescricaoTarefaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextFieldDescricaoTarefaActionPerformed
+
     private void preencherTabela(){
         ArrayList <String> listaTarefas;
         
@@ -306,7 +320,8 @@ public class TelaToDoListV1 extends javax.swing.JFrame {
 
             model.addRow(new Object[]{
                 dados[0],
-                dados[1]
+                dados[1],
+                dados[2]
             });
         }
     }
@@ -361,6 +376,41 @@ public class TelaToDoListV1 extends javax.swing.JFrame {
         }
         
         return false;
+    }
+    
+    private void atualizarEstatisticas(){
+        jTextFieldTotal.setText(Integer.toString(tarefas.size()));
+        
+        jTextFieldConcluidas.setText(String.valueOf(retornarTotalConcluidas()));
+        jTextFieldNaoConcluidas.setText(String.valueOf(retornarTotalNaoConcluidas()));
+    }
+    
+    private int retornarTotalConcluidas(){
+        int quantidadeConcluida = 0;
+        
+        for(String tarefa : tarefas){
+            String[] dados = tarefa.split(";");
+            
+            if (dados[1].equals(CONCLUIDA)){
+                quantidadeConcluida++;
+            }
+        }
+        
+        return quantidadeConcluida;
+    }
+    
+    private int retornarTotalNaoConcluidas(){
+        int quantidadeNaoConcluida = 0;
+        
+        for(String tarefa : tarefas){
+            String[] dados = tarefa.split(";");
+            
+            if (dados[1].equals(NAO_CONCLUIDA)){
+                quantidadeNaoConcluida++;
+            }
+        }
+        
+        return quantidadeNaoConcluida;
     }
     
     /**
